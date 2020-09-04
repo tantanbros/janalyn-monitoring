@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/PatientListFragment">
+
+    <fragment
+        android:id="@+id/PatientListFragment"
+        android:name="com.example.urinemonitoring.PatientListFragment"
+        android:label="@string/patientlist_fragment_label"
+        tools:layout="@layout/fragment_patientlist">
+        <action
+            android:id="@+id/action_PatientList_to_CreatePatient"
+            app:destination="@id/CreatePatientFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/CreatePatientFragment"
+        android:name="com.example.urinemonitoring.CreatePatientFragment"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_createpatient">
+        <action
+            android:id="@+id/action_CreatePatient_to_Saved"
+            app:destination="@id/SavedFragment" />
+        <action
+            android:id="@+id/action_CreatePatient_to_Delete"
+            app:destination="@id/DeleteFragment" />
+        <action
+            android:id="@+id/action_CreatePatient_to_PatientList"
+            app:destination="@id/PatientListFragment" />
+        <action
+            android:id="@+id/action_CreatePatient_to_NotYetSaved"
+            app:destination="@id/NotYetSavedFragment" />
+        <action
+            android:id="@+id/action_CreatePatient_to_RecordList"
+            app:destination="@id/RecordListFragment" />
+        <action
+            android:id="@+id/action_CreatePatient_to_Monitoring"
+            app:destination="@id/MonitoringFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/SavedFragment"
+        android:name="com.example.urinemonitoring.SavedFragment"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_saved">
+        <action
+            android:id="@+id/action_Saved_to_CreatePatient"
+            app:destination="@id/CreatePatientFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/NotYetSavedFragment"
+        android:name="com.example.urinemonitoring.NotYetSavedFragment"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_notyetsaved">
+        <action
+            android:id="@+id/action_NotYetSaved_to_Saved"
+            app:destination="@id/SavedFragment" />
+        <action
+            android:id="@+id/action_NotYetSaved_to_CreatePatient"
+            app:destination="@id/CreatePatientFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/DeleteFragment"
+        android:name="com.example.urinemonitoring.DeleteFragment"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_delete">
+        <action
+            android:id="@+id/action_Delete_to_CreatePatient"
+            app:destination="@id/CreatePatientFragment" />
+        <action
+            android:id="@+id/action_Delete_to_Deleted"
+            app:destination="@id/DeletedFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/DeletedFragment"
+        android:name="com.example.urinemonitoring.DeletedFragment"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_deleted">
+        <action
+            android:id="@+id/action_Deleted_to_PatientList"
+            app:destination="@id/PatientListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/RecordListFragment"
+        android:name="com.example.urinemonitoring.RecordListFragment"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_recordlist">
+        <action
+            android:id="@+id/action_RecordList_to_CreatePatient"
+            app:destination="@id/CreatePatientFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/MonitoringFragment"
+        android:name="com.example.urinemonitoring.MonitoringFragment"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_monitoring">
+        <action
+            android:id="@+id/action_Monitoring_to_CreatePatient"
+            app:destination="@id/CreatePatientFragment" />
+        <action
+            android:id="@+id/action_Monitoring_to_ConfirmEnd"
+            app:destination="@id/ConfirmEndFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/ConfirmEndFragment"
+        android:name="com.example.urinemonitoring.ConfirmEndFragment"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_confirmend">
+        <action
+            android:id="@+id/action_ConfirmEnd_to_Monitoring"
+            app:destination="@id/MonitoringFragment" />
+    </fragment>
+
+
+
+
+
+
+    <fragment
+        android:id="@+id/FirstFragment"
+        android:name="com.example.urinemonitoring.FirstFragment"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_first">
+
+        <action
+            android:id="@+id/action_FirstFragment_to_SecondFragment"
+            app:destination="@id/SecondFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/SecondFragment"
+        android:name="com.example.urinemonitoring.SecondFragment"
+        android:label="@string/second_fragment_label"
+        tools:layout="@layout/fragment_second">
+
+        <action
+            android:id="@+id/action_SecondFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+    </fragment>
+</navigation>
