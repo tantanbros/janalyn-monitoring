@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "records",
@@ -12,7 +13,8 @@ import androidx.room.PrimaryKey;
                 parentColumns = "Id",
                 childColumns = "patientId",
                 onDelete = ForeignKey.CASCADE
-        )
+        ),
+        indices = {@Index("patientId")}
 )
 public class Record {
     @NonNull

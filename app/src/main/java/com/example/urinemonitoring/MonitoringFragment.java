@@ -232,12 +232,16 @@ public class MonitoringFragment extends Fragment {
     }
 
     private JsonObjectRequest createRequest() {
+        Log.d(TAG, "GET - " + option.getUrl());
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, option.getUrl(), null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 Record record = jsonToRecord(response);
                 if(record != null) {
+                    Log.d(TAG, "Record is not null");
                     addRecord(record);
+                } else {
+                    Log.d(TAG, "Record is null");
                 }
             }
         }, new Response.ErrorListener() {
