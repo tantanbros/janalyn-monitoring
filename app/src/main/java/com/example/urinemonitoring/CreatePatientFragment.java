@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.urinemonitoring.helpers.MonitoringHolder;
 import com.example.urinemonitoring.helpers.PatientHolder;
 import com.example.urinemonitoring.models.Patient;
 import com.example.urinemonitoring.models.PatientViewModel;
@@ -113,6 +114,8 @@ public class CreatePatientFragment extends Fragment {
                 }else {
                     tryNavigateTo(R.id.action_CreatePatient_to_PatientList);
                 }
+                MonitoringHolder.setStarted(false);
+                MonitoringHolder.setEnded(true);
             }
         });
 

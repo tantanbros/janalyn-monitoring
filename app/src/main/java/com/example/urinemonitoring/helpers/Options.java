@@ -40,11 +40,12 @@ public class Options {
     }
 
     private final int[] intervalMillis = {
-            10 * 1000,      // 10 seconds
-            30 * 1000,      // 30 seconds
-            60 * 1000,      // 1 minute
-            5 * 60 * 1000,  // 5 minutes
-            30 * 60 * 1000, // 30 minutes
-            60 * 60 * 1000, // 1 hour
+            1 * 1000//,      // 1 second
+//            10 * 1000,      // 10 seconds
+//            30 * 1000,      // 30 seconds
+//            60 * 1000,      // 1 minute
+//            5 * 60 * 1000,  // 5 minutes
+//            30 * 60 * 1000, // 30 minutes
+//            60 * 60 * 1000, // 1 hour
     };
 }

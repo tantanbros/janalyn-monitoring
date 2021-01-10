@@ -6,6 +6,8 @@ import android.os.AsyncTask;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.example.urinemonitoring.helpers.Constants;
+
 import java.util.List;
 
 public class RecordViewModel extends AndroidViewModel {
@@ -30,7 +32,7 @@ public class RecordViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<Record>> getRecordsByPatient(String patientId) {
-        return recordDao.getRecordsByPatient(patientId);
+        return recordDao.getRecordsByPatient(patientId, Constants.noFlowRate);
     }
 
     private class InsertAsyncTask extends AsyncTask<Record, Void, Void> {

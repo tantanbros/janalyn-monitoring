@@ -67,9 +67,26 @@ public class Record {
     public String toString() {
         String str = "";
         str += String.format("%s\n", RecordTime);
-        str += String.format("Flowrate: %s ml/s Volume: %s ml\n", FlowRate, Volume);
+
+        // v1.1
+        str += String.format("Volume: %s ml\n", Volume);
+
+        // v1
+//        str += String.format("Flowrate: %s ml/s Volume: %s ml\n", FlowRate, Volume);
         str += String.format("Turbidity Eq. V: %s V\n", Turbidity);
         str += String.format("Color Eq: %s \n", Color);
+        str += "\n\n";
+        return str;
+    }
+
+    // v1.1
+    public  String toFinalString() {
+        String str = "";
+        str += String.format("%s\n", RecordTime);
+        str += String.format("Final Flowrate: %s ml/s\n", FlowRate);
+        str += String.format("Final Volume: %s ml\n", Volume);
+        str += String.format("Final Turbidity Eq. V: %s V\n", Turbidity);
+        str += String.format("Final Color Eq: %s \n", Color);
         str += "\n\n";
         return str;
     }

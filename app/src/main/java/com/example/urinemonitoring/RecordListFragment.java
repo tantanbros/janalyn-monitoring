@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -49,12 +51,27 @@ public class RecordListFragment extends Fragment {
     private RecordViewModel recordViewModel;
     private Patient patient;
 
+    ActivityResultLauncher<String> requestPermissionLauncher;
+
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
         // Inflate the layout for this fragment
+        requestPermissionLauncher =
+                RecordListFragment.this.registerForActivityResult(new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
+                    @Override
+                    public void onActivityResult(Boolean isGranted) {
+                        if (isGranted) {
+                            Log.d(TAG, "requestPermissionLauncher - PERMISSION_GRANTED - Downloading Records");
+                            runDownloadable();
+                        } else {
+                            Log.d(TAG, "requestPermissionLauncher - PERMISSION_DENIED - Feature Unavailable");
+                            Toast.makeText(RecordListFragment.this.getContext(), "The feature unavailable because you denied it", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
         return inflater.inflate(R.layout.fragment_recordlist, container, false);
     }
 
@@ -91,106 +108,119 @@ public class RecordListFragment extends Fragment {
         view.findViewById(R.id.btnDownload).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showDialog(RecordListFragment.this);
+                showDialog();
             }
         });
     }
 
     interface Downloadable {
-        void run();
+        void run(LifecycleOwner owner);
     }
 
-    private void showDialog(final LifecycleOwner owner) {
-
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_filename, null);
-        TextView txtFileName = view.findViewById(R.id.txtFileName);
-
-        // create the parent directories for each device
-        final File path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), String.format("Device_%s", patient.getDevice()));
+    private File createParentDirectory() {
+        File path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), String.format("Device_%s", patient.getDevice()));
         if(!path.exists()) {
             path.mkdirs();
         }
+        return path;
+    }
+
+    private void runDownloadable()
+    {
+        if(d != null) {
+            Log.d(TAG, "runDownloadable - d.run()");
+            d.run(this);
+        } else {
+            Log.d(TAG, "runDownloadable - d is null");
+        }
+    }
+
+    private void onRecordsChanged(List<Record> records, File path) {
+        Log.d("DownloadDialog", "Download: " + records.size() + " records");
+        try {
+            int i = 0;
+            for(Record r: records) {
+                Log.d(TAG, r.toFinalString());
+
+                // create the file per record
+                String filename = String.format("Record %d_%s.txt", i, r.getRecordTime());
+                File file = new File(path, filename);
+                if(!file.getParentFile().exists()) {
+                    file.getParentFile().mkdirs();
+                }
+                if(!file.exists()) {
+                    file.createNewFile();
+                    Log.d(TAG, "Download Record: " + filename);
+
+                    FileOutputStream stream = new FileOutputStream(file);
+
+                    // v1
+//                    stream.write(r.toString().getBytes());
+
+                    // v1.1
+                    stream.write(r.toFinalString().getBytes());
+                    stream.close();
+                }
+                i++;
+            }
+            Toast.makeText(getContext(), "Records Downloaded", Toast.LENGTH_SHORT).show();
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+    }
+
+
+    Downloadable d;
+
+    private void showDialog() {
+        // create the parent directories for each device
+        final File path = createParentDirectory();
+
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_filename, null);
+        TextView txtFileName = view.findViewById(R.id.txtFileName);
         txtFileName.setText(path.getPath());
         Log.d(TAG, "Download Path: " + path.getAbsolutePath());
 
-        final Downloadable d = new Downloadable() {
+        d = new Downloadable() {
             @Override
-            public void run() {
+            public void run(LifecycleOwner owner) {
                 // Get the records from db and write to files
                 recordViewModel.getRecordsByPatient(patient.getId()).observe(owner, new Observer<List<Record>>() {
                     @Override
                     public void onChanged(List<Record> records) {
-                        Log.d("DownloadDialog", "Download: " + records.size() + " records");
-                        try {
-                            int i = 0;
-                            for(Record r: records) {
-                                // create the file per record
-                                String filename = String.format("Record %d_%s.txt", i, r.getRecordTime());
-                                File file = new File(path, filename);
-                                if(!file.getParentFile().exists()) {
-                                    file.getParentFile().mkdirs();
-                                }
-                                if(!file.exists()) {
-                                    file.createNewFile();
-                                    Log.d(TAG, "Download Record: " + filename);
-
-                                    FileOutputStream stream = new FileOutputStream(file);
-                                    stream.write(r.toString().getBytes());
-                                    stream.close();
-                                }
-                                i++;
-                            }
-                            Toast.makeText(getContext(), "Records Downloaded", Toast.LENGTH_SHORT).show();
-                        }
-                        catch (IOException e) {
-                            Log.e("Exception", "File write failed: " + e.toString());
-                        }
+                        onRecordsChanged(records, path);
                         recordViewModel.getRecordsByPatient(patient.getId()).removeObserver(this);
                     }
                 });
             }
         };
 
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Download Records")
                 .setView(view)
                 .setPositiveButton("Download", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        // Runtime permissions
-                        ActivityResultLauncher<String> requestPermissionLauncher =
-                                getActivity().registerForActivityResult(new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
-                                    @Override
-                                    public void onActivityResult(Boolean isGranted) {
-                                        if (isGranted) {
-                                            // Permission is granted. Continue the action or workflow in your
-                                            // app.
-                                            Log.d(TAG, "requestPermissionLauncher - PERMISSION_GRANTED - Downloading Records");
-                                            d.run();
-                                        } else {
-                                            // Explain to the user that the feature is unavailable because the
-                                            // features requires a permission that the user has denied. At the
-                                            // same time, respect the user's decision. Don't link to system
-                                            // settings in an effort to convince the user to change their
-                                            // decision.
-                                            Log.d(TAG, "requestPermissionLauncher - PERMISSION_DENIED - Feature Unavailable");
-                                            Toast.makeText(RecordListFragment.this.getContext(), "The feature unavailable because you denied it", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                });
+                        try {
+//                          // check for permissions
+                            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                                // You can use the API that requires the permission.
+                                Log.d(TAG, "checkSelfPermission - PERMISSION_GRANTED - Downloading Records");
+                                runDownloadable();
+                            } else {
+                                Log.d(TAG, "checkSelfPermission else - PERMISSION NOT GRANTED - Asking for Permission");
 
-//                        // check for permissions
-                        if (ContextCompat.checkSelfPermission(
-                                RecordListFragment.this.getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                            // You can use the API that requires the permission.
-                            Log.d(TAG, "checkSelfPermission - PERMISSION_GRANTED - Downloading Records");
-                            d.run();
-                        }  else {
-                            // You can directly ask for the permission.
-                            // The registered ActivityResultCallback gets the result of this request.
-                            Log.d(TAG, "checkSelfPermission - PERMISSION_DENIED - Asking for Permission");
-                            requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+
+                                // You can directly ask for the permission.
+                                Log.d(TAG, "checkSelfPermission - PERMISSION_DENIED - Asking for Permission");
+                                requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                                // v1.1
+                                runDownloadable();
+                            }
+                        } catch (Exception e){
+                            throw e;
                         }
                     }
                 })

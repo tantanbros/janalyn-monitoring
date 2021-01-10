@@ -62,12 +62,14 @@
                     android:id="@+id/textData"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:minHeight="320dp"
+                    android:maxHeight="320dp"
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginRight="20dp"
                     android:layout_marginBottom="10dp"
                     android:fontFamily="@font/inconsolata"
-                    android:lines="18"
+                    android:maxLines="10000"
                     android:scrollbars="vertical"
                     android:textColor="#FFFFFF"
                     android:textSize="18sp" />
@@ -84,26 +86,38 @@
             android:orientation="vertical"
             android:weightSum="200">
 
-            <Button
-                android:id="@+id/btnEnd"
-                android:layout_width="150dp"
-                android:layout_height="0dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="50"
-                android:background="@color/button"
-                android:text="End"
-                android:textColor="@android:color/white" />
+<!--            v1.1 - removed -->
+<!--            <Button-->
+<!--                android:id="@+id/btnEnd"-->
+<!--                android:layout_width="150dp"-->
+<!--                android:layout_height="0dp"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:layout_weight="50"-->
+<!--                android:background="@color/button"-->
+<!--                android:text="End"-->
+<!--                android:textColor="@android:color/white" />-->
+<!---->
+<!--            <Button-->
+<!--                android:id="@+id/btnSave"-->
+<!--                android:layout_width="150dp"-->
+<!--                android:layout_height="0dp"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:layout_marginTop="10dp"-->
+<!--                android:layout_weight="50"-->
+<!--                android:background="@color/button"-->
+<!--                android:text="Save Data"-->
+<!--                android:textColor="@android:color/white" />-->
 
-            <Button
-                android:id="@+id/btnSave"
-                android:layout_width="150dp"
-                android:layout_height="0dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:layout_weight="50"
-                android:background="@color/button"
-                android:text="Save Data"
-                android:textColor="@android:color/white" />
+<!--            <Button-->
+<!--                android:id="@+id/btnReset"-->
+<!--                android:layout_width="150dp"-->
+<!--                android:layout_height="0dp"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:layout_marginTop="10dp"-->
+<!--                android:layout_weight="50"-->
+<!--                android:background="@color/button"-->
+<!--                android:text="Reset"-->
+<!--                android:textColor="@android:color/white" />-->
 
             <Button
                 android:id="@+id/btnOptions"
